@@ -212,6 +212,7 @@ button {
 .note-title-input {
   font-weight: 500;
   font-size: 15px;
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   color: var(--text-primary);
   background: transparent;
   border: none;
@@ -384,18 +385,55 @@ button {
 
 /* Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 4px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg-secondary);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--border-color);
-  border-radius: 3px;
+  background: var(--text-muted);
+  border-radius: 2px;
+  opacity: 0.6;
 }
 
 ::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+  opacity: 0.8;
+}
+
+/* Textarea specific scrollbar */
+.note-textarea::-webkit-scrollbar {
+  width: 3px;
+}
+
+.note-textarea::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.note-textarea::-webkit-scrollbar-thumb {
   background: var(--text-muted);
+  border-radius: 2px;
+  opacity: 0.4;
+}
+
+.note-textarea::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+  opacity: 0.7;
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--text-muted) transparent;
+}
+
+.note-textarea {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(142, 142, 160, 0.4) transparent;
+}
+
+[data-theme="dark"] .note-textarea {
+  scrollbar-color: rgba(142, 142, 160, 0.6) transparent;
 }
