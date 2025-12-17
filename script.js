@@ -75,7 +75,8 @@ class FragmentNotes {
       content: note.content || '',
       date: note.date || new Date().toISOString(),
       lastModified: note.lastModified || Date.now(),
-      wordCount: this.getWordCount(note.content || '')
+      wordCount: this.getWordCount(note.content || ''),
+      isHighPriority: note.isHighPriority || false
     }));
   }
 
@@ -90,7 +91,8 @@ class FragmentNotes {
       content,
       date: new Date().toISOString(),
       lastModified: Date.now(),
-      wordCount: this.getWordCount(content)
+      wordCount: this.getWordCount(content),
+      isHighPriority: false
     };
 
     this.notes.unshift(note);
@@ -132,6 +134,18 @@ class FragmentNotes {
       this.saveData();
       this.updateFilteredNotes();
       this.updateNoteCount();
+    }
+  }
+
+  toggleNotePriority(id) {
+    const note = this.notes.find(n => n.id === id);
+    if (note) {
+      note.isHighPriority = !note.isHighPriority;
+      note.lastModified = Date.now();
+      this.saveData();
+      this.updateFilteredNotes();
+      this.render();
+      this.showStatus(note.isHighPriority ? 'Note marked as high priority' : 'Priority removed');
     }
   }
 
@@ -217,8 +231,12 @@ class FragmentNotes {
       return;
     }
 
-    // Sort by last modified
-    const sortedNotes = [...this.filteredNotes].sort((a, b) => b.lastModified - a.lastModified);
+    // Sort by priority first, then by last modified
+    const sortedNotes = [...this.filteredNotes].sort((a, b) => {
+      if (a.isHighPriority && !b.isHighPriority) return -1;
+      if (!a.isHighPriority && b.isHighPriority) return 1;
+      return b.lastModified - a.lastModified;
+    });
     
     sortedNotes.forEach(note => this.renderNote(note));
     this.updateNoteCount();
@@ -246,6 +264,11 @@ class FragmentNotes {
     noteElement.className = 'note';
     noteElement.id = note.id;
     
+    // Add high priority class
+    if (note.isHighPriority) {
+      noteElement.classList.add('high-priority');
+    }
+    
     // Highlight search terms
     const searchTerm = this.elements.searchInput.value.toLowerCase();
     const shouldHighlight = searchTerm && (
@@ -269,7 +292,9 @@ class FragmentNotes {
       </div>
       <div class="note-footer">
         <div class="note-date">${this.formatDate(note.date)}</div>
-        <div class="word-count">${note.wordCount} words</div>
+        <button class="priority-btn ${note.isHighPriority ? 'active' : ''}" title="Toggle high priority">
+          ${note.isHighPriority ? '★ Priority' : '☆ Priority'}
+        </button>
       </div>
     `;
 
@@ -281,8 +306,10 @@ class FragmentNotes {
     const deleteBtn = noteElement.querySelector('.delete-btn');
     const titleInput = noteElement.querySelector('.note-title-input');
     const textarea = noteElement.querySelector('.note-textarea');
+    const priorityBtn = noteElement.querySelector('.priority-btn');
 
     deleteBtn.addEventListener('click', () => this.deleteNote(note.id));
+    priorityBtn.addEventListener('click', () => this.toggleNotePriority(note.id));
 
     // Debounced save for title
     let titleTimeout;
