@@ -306,11 +306,7 @@ class FragmentNotes {
       }, 300);
     });
 
-    // Auto-resize textarea
-    textarea.addEventListener('input', () => {
-      textarea.style.height = 'auto';
-      textarea.style.height = textarea.scrollHeight + 'px';
-    });
+    // Remove auto-resize to allow proper scrolling
   }
 
   formatDate(dateString) {
