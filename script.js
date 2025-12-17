@@ -362,7 +362,7 @@ class FragmentNotes {
   showStatus(message) {
     this.elements.statusText.textContent = message;
     setTimeout(() => {
-      this.elements.statusText.textContent = 'Ready';
+      this.elements.statusText.textContent = 'Notes are stored locally. Clearing browser data will erase them.';
     }, 2000);
   }
 
