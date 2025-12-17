@@ -14,13 +14,11 @@ class FragmentNotes {
     this.elements = {
       notesContainer: document.getElementById('notesContainer'),
       newNoteBtn: document.getElementById('newNoteBtn'),
-      firstNoteBtn: document.getElementById('firstNoteBtn'),
       themeToggleBtn: document.getElementById('themeToggleBtn'),
       searchBtn: document.getElementById('searchBtn'),
       searchBar: document.getElementById('searchBar'),
       searchInput: document.getElementById('searchInput'),
       clearSearchBtn: document.getElementById('clearSearchBtn'),
-      emptyState: document.getElementById('emptyState'),
       statusText: document.getElementById('statusText'),
       noteCount: document.getElementById('noteCount')
     };
@@ -29,7 +27,6 @@ class FragmentNotes {
   initEventListeners() {
     // Note creation
     this.elements.newNoteBtn.addEventListener('click', () => this.createNote());
-    this.elements.firstNoteBtn.addEventListener('click', () => this.createNote());
     
     // Theme toggle
     this.elements.themeToggleBtn.addEventListener('click', () => this.toggleTheme());
@@ -224,10 +221,11 @@ class FragmentNotes {
     
     if (this.filteredNotes.length === 0) {
       if (this.notes.length === 0) {
-        this.renderEmptyState();
+        // No notes - just show empty container
       } else {
         this.renderNoResults();
       }
+      this.updateNoteCount();
       return;
     }
 
@@ -242,19 +240,22 @@ class FragmentNotes {
     this.updateNoteCount();
   }
 
-  renderEmptyState() {
-    this.elements.emptyState.style.display = 'block';
-    this.elements.notesContainer.appendChild(this.elements.emptyState);
-    this.updateNoteCount();
-  }
-
   renderNoResults() {
     const noResults = document.createElement('div');
-    noResults.className = 'empty-state';
+    noResults.style.cssText = `
+      width: 100%;
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    `;
     noResults.innerHTML = `
-      <div class="empty-icon">🔍</div>
-      <h2>No results found</h2>
-      <p>Try adjusting your search terms</p>
+      <div style="font-size: 48px; margin-bottom: 16px;">🔍</div>
+      <h2 style="font-weight: 500; margin-bottom: 8px; color: var(--text-secondary);">No results found</h2>
+      <p style="max-width: 400px; margin: 0 auto 24px; font-size: 14px;">Try adjusting your search terms</p>
     `;
     this.elements.notesContainer.appendChild(noResults);
   }
